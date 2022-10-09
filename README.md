@@ -1,39 +1,58 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# flutter_video_player
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+<b>[Forked From flutter_meedu_videoplayer](https://pub.dev/packages/flutter_meedu_videoplayer)</b>
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+## Cross-platform video player (macos not included)
+- Android and Ios are using video player
+- Desktop are using dart-vlc
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+| Features  | iOS | Android | windows | linux | macos
+| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
+| Videos from Network  | ✅  | ✅ | ✅ | ✅ | x |
+| Videos from Assets  | ✅  | ✅ | ✅ | ✅ | x |
+| Videos from local files  | ✅  | ✅ | ✅ | ✅ | x|
+| Looping  | ✅  | ✅ | ✅ | ✅ | x |
+| Autoplay  | ✅  | ✅ | ✅ | ✅ | x |
+| Swipe to increase and decrease Sound  | ✅  | ✅ | ✅ | ✅ | x|
+| Swipe to seek in video | ✅  | ✅ | ✅ | ✅ | x|
+| Fullscreen  | ✅  | ✅ | ✅ | ✅ | x |
+| Launch Player as Fullscreen  | ✅  | ✅ | ✅ | ✅ |x |
+| Playback Speed  | ✅  | ✅ | ✅ | ✅ | x |
+| fastForward / Rewind  | ✅  | ✅ | ✅ | ✅ |x |
+| srt subtitles  | ✅  | ✅ | X | X | X |
+| Customize  | partially  | partially | ✅ | ✅ | x |
 
-## Features
+---
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
 
-## Getting started
+## Used meedu player as a base and added (also fixed some errors)
+- swipe to increase and decrease volume 
+- swipe to seek 
+- integrated wake lock in the code
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
+## Setup For windows 
+1.Add in main 
 ```dart
-const like = 'sample';
+  if (Platform.isWindows) {
+    //init dart vlc
+    DartVLC.initialize();
+    }
+```
+Example:
+```dart
+void main() {
+if (Platform.isWindows) {
+    DartVLC.initialize();
+}
+runApp(MyApp());
+}
 ```
 
-## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+<img src="https://darwin-morocho.github.io/flutter-meedu-player/assets/q2.gif" alt="meedu_player" width="160" />
+<br/>
+<img src="https://darwin-morocho.github.io/flutter-meedu-player/assets/full.gif" alt="meedu_player" width="300" />
+<img src="https://user-images.githubusercontent.com/15864336/94494352-9924d100-01b4-11eb-9c0f-54c88868331b.png" alt="meedu_player" width="300" />
+
+
