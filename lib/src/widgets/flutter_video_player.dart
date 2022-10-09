@@ -85,7 +85,7 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
                       return Stack(
                         fit: StackFit.expand,
                         children: [
-                          NativeVideo(
+                          Video(
                             player: controller.videoPlayerControllerWindows!,
                             showControls: false,
                           ),
