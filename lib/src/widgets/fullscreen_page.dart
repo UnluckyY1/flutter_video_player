@@ -1,28 +1,24 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu/ui.dart';
 import 'package:flutter_video_player/flutter_video_player.dart';
 
 class VideoPlayerFullscreenPage extends StatefulWidget {
+  const VideoPlayerFullscreenPage({required this.controller, super.key});
+
   final FlutterVideoPlayerController controller;
 
-  const VideoPlayerFullscreenPage({Key? key, required this.controller})
-      : super(key: key);
-
   @override
-  _MeeduPlayerFullscreenPageState createState() =>
-      _MeeduPlayerFullscreenPageState();
+  State<VideoPlayerFullscreenPage> createState() =>
+      _VideoPlayerFullscreenPageState();
 }
 
-class _MeeduPlayerFullscreenPageState extends State<VideoPlayerFullscreenPage> {
+class _VideoPlayerFullscreenPageState extends State<VideoPlayerFullscreenPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
       body: RxBuilder(
-        //observables: [controller.videoFit],
         (__) {
           return SizedBox(
             width: double.infinity,
@@ -44,8 +40,8 @@ class _MeeduPlayerFullscreenPageState extends State<VideoPlayerFullscreenPage> {
   }
 
   @override
-  Future<void> dispose() async {
-    widget.controller.fullScreenClosed();
+  void dispose() {
     super.dispose();
+    widget.controller.fullScreenClosed();
   }
 }

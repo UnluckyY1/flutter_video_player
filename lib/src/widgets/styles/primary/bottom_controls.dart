@@ -5,17 +5,14 @@ import 'package:flutter_video_player/src/helpers/responsive.dart';
 import 'package:flutter_video_player/src/helpers/utils.dart';
 import 'package:flutter_video_player/src/widgets/fullscreen_button.dart';
 import 'package:flutter_video_player/src/widgets/mute_sound_button.dart';
-import 'package:flutter_video_player/src/widgets/playa_back_speed.dart';
+import 'package:flutter_video_player/src/widgets/play_back_speed.dart';
+import 'package:flutter_video_player/src/widgets/player_slider.dart';
 import 'package:flutter_video_player/src/widgets/video_fit_button.dart';
-
-
-
-import '../../player_slider.dart';
 
 class PrimaryBottomControls extends StatelessWidget {
   final Responsive responsive;
-  const PrimaryBottomControls({Key? key, required this.responsive})
-      : super(key: key);
+
+  const PrimaryBottomControls({required this.responsive, super.key});
 
   @override
   Widget build(BuildContext context) {

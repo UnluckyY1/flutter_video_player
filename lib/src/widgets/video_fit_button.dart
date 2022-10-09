@@ -6,26 +6,24 @@ import 'player_button.dart';
 
 class VideoFitButton extends StatelessWidget {
   final Responsive responsive;
-  const VideoFitButton({Key? key, required this.responsive}) : super(key: key);
+  const VideoFitButton({required this.responsive, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _ = FlutterVideoPlayerController.of(context);
-    return RxBuilder(
-        //observables: [_.fullscreen],
-        (__) {
+    final controller = FlutterVideoPlayerController.of(context);
+    return RxBuilder((__) {
       String iconPath = 'assets/icons/fit.png';
-      Widget? customIcon = _.customIcons.videoFit;
+      Widget? customIcon = controller.customIcons.videoFit;
 
       return PlayerButton(
-        size: responsive.ip(_.fullscreen.value ? 5 : 7),
+        size: responsive.ip(controller.fullscreen.value ? 5 : 7),
         circle: false,
         backgrounColor: Colors.transparent,
         iconColor: Colors.white,
         iconPath: iconPath,
         customIcon: customIcon,
         onPressed: () {
-          _.toggleVideoFit();
+          controller.toggleVideoFit();
         },
       );
     });

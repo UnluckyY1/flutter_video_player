@@ -11,8 +11,6 @@ import 'package:flutter_video_player/src/helpers/utils.dart';
 import 'package:flutter_video_player/src/widgets/forward_and_rewind.dart';
 import 'package:flutter_video_player/src/widgets/rewind_and_forward_layout.dart';
 
-
-
 class ControlsContainer extends StatelessWidget {
   final Widget child;
   bool playing = false;
@@ -40,10 +38,11 @@ class ControlsContainer extends StatelessWidget {
   //double _initialScale = 1.0, _maxScale = 1.0;
 
   //Duration swipeDuration=Duration(seconds: 0);
-  ControlsContainer({Key? key, required this.child}) : super(key: key);
+  ControlsContainer({required this.child, super.key});
   //------------------------------------//
   //FORWARD AND REWIND (DRAG HORIZONTAL)//
   //------------------------------------//
+
   void _forwardDragStart(
       Offset globalPosition, FlutterVideoPlayerController controller) async {
     playing = controller.playerStatus.playing;
@@ -245,13 +244,10 @@ class ControlsContainer extends StatelessWidget {
 
             if (_.doubleTapCount.value != 0 || tappedTwice) {
               _forward(_);
-              //print("if");
+
               tappedOnce(_, true);
             } else {
-              //print("else");
-              //print("1 " + tappedTwice.toString());
               tappedOnce(_, false);
-              //print("2 " + tappedTwice.toString());
             }
           },
           //behavior: HitTestBehavior.,
@@ -264,7 +260,6 @@ class ControlsContainer extends StatelessWidget {
                   ? SystemMouseCursors.basic
                   : SystemMouseCursors.none,
               onHover: (___) {
-                //print(___.delta);
                 if (_.mouseMoveInitial < const Offset(75, 75).distance) {
                   _.mouseMoveInitial = _.mouseMoveInitial + ___.delta.distance;
                 } else {
@@ -514,23 +509,16 @@ class ControlsContainer extends StatelessWidget {
       },
       onHorizontalDragEnd: (DragEndDetails details) {
         if (!_.windows) {
-          //if (!_.videoPlayerController!.value.isInitialized) {
-          //return;
-          //}
           gettingNotification = false;
           _forwardDragEnd(_);
         }
       },
       onVerticalDragUpdate: (DragUpdateDetails details) {
         if (!_.windows) {
-          //if (!_.videoPlayerController!.value.isInitialized) {
-          //return;
-          //}
-          //_.controls=true;
-
           final Offset position = details.localPosition;
           if (_dragInitialDelta == Offset.zero) {
             if (kDebugMode) print(details.globalPosition.dy);
+
             if (details.globalPosition.dy >
                     MediaQuery.of(context).size.height * 0.1 &&
                 ((MediaQuery.of(context).size.height -
@@ -602,8 +590,8 @@ class ControlsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _ = FlutterVideoPlayerController.of(context);
+    final controller = FlutterVideoPlayerController.of(context);
 
-    return Positioned.fill(child: controlsUI(_, context));
+    return Positioned.fill(child: controlsUI(controller, context));
   }
 }

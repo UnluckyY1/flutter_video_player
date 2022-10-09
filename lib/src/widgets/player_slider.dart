@@ -4,11 +4,11 @@ import 'package:flutter_video_player/flutter_video_player.dart';
 import 'package:flutter_video_player/src/helpers/utils.dart';
 
 class PlayerSlider extends StatelessWidget {
-  const PlayerSlider({Key? key}) : super(key: key);
+  const PlayerSlider({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _ = FlutterVideoPlayerController.of(context);
+    final controller = FlutterVideoPlayerController.of(context);
     return Stack(
       alignment: Alignment.centerLeft,
       children: [
@@ -19,7 +19,7 @@ class PlayerSlider extends StatelessWidget {
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 color: Colors.white30,
-                width: constraints.maxWidth * _.bufferedPercent.value,
+                width: constraints.maxWidth * controller.bufferedPercent.value,
                 height: 3,
               );
             },
@@ -28,8 +28,8 @@ class PlayerSlider extends StatelessWidget {
         RxBuilder(
           //observables: [_.sliderPosition, _.duration],
           (__) {
-            final int value = _.sliderPosition.value.inSeconds;
-            final double max = _.duration.value.inSeconds.toDouble();
+            final int value = controller.sliderPosition.value.inSeconds;
+            final double max = controller.duration.value.inSeconds.toDouble();
             if (value > max || max <= 0) {
               return Container();
             }
@@ -41,29 +41,29 @@ class PlayerSlider extends StatelessWidget {
               alignment: Alignment.center,
               child: SliderTheme(
                 data: SliderThemeData(
-                  trackShape: MSliderTrackShape(),
-                  thumbColor: _.colorTheme,
-                  activeTrackColor: _.colorTheme,
+                  trackShape: _MSliderTrackShape(),
+                  thumbColor: controller.colorTheme,
+                  activeTrackColor: controller.colorTheme,
                   trackHeight: 10,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 4.0),
                 ),
                 child: Slider(
                   min: 0,
-                  divisions: _.duration.value.inSeconds,
+                  divisions: controller.duration.value.inSeconds,
                   value: value.toDouble(),
                   onChangeStart: (v) {
-                    _.onChangedSliderStart();
+                    controller.onChangedSliderStart();
                   },
                   onChangeEnd: (v) {
-                    _.onChangedSliderEnd();
-                    _.seekTo(
+                    controller.onChangedSliderEnd();
+                    controller.seekTo(
                       Duration(seconds: v.floor()),
                     );
                   },
-                  label: printDuration(_.sliderPosition.value),
+                  label: printDuration(controller.sliderPosition.value),
                   max: max,
-                  onChanged: _.onChangedSlider,
+                  onChanged: controller.onChangedSlider,
                 ),
               ),
             );
@@ -74,7 +74,7 @@ class PlayerSlider extends StatelessWidget {
   }
 }
 
-class MSliderTrackShape extends RoundedRectSliderTrackShape {
+class _MSliderTrackShape extends RoundedRectSliderTrackShape {
   @override
   Rect getPreferredRect({
     required RenderBox parentBox,

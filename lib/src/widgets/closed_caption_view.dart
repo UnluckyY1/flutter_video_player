@@ -5,16 +5,14 @@ import 'package:flutter_video_player/src/helpers/responsive.dart';
 
 class ClosedCaptionView extends StatelessWidget {
   final Responsive responsive;
-  const ClosedCaptionView({Key? key, required this.responsive})
-      : super(key: key);
+
+  const ClosedCaptionView({required this.responsive, super.key});
 
   @override
   Widget build(BuildContext context) {
     final _ = FlutterVideoPlayerController.of(context);
-    return RxBuilder(
-        //observables: [_.closedCaptionEnabled],
-        (__) {
-      if (!_.closedCaptionEnabled.value) return Container();
+    return RxBuilder((__) {
+      if (!_.closedCaptionEnabled.value) return const SizedBox();
 
       return StreamBuilder<Duration>(
         initialData: Duration.zero,

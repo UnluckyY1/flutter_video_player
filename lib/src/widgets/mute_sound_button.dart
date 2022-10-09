@@ -7,32 +7,31 @@ import 'package:flutter_video_player/src/helpers/responsive.dart';
 import 'player_button.dart';
 
 class MuteSoundButton extends StatelessWidget {
+  const MuteSoundButton({required this.responsive, super.key});
+
   final Responsive responsive;
-  const MuteSoundButton({Key? key, required this.responsive}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final _ = FlutterVideoPlayerController.of(context);
-    return RxBuilder(
-        //observables: [_.mute, _.fullscreen],
-        (__) {
+    final controller = FlutterVideoPlayerController.of(context);
+    return RxBuilder((__) {
       String iconPath = 'assets/icons/mute.png';
-      Widget? customIcon = _.customIcons.mute;
+      Widget? customIcon = controller.customIcons.mute;
 
-      if (!_.mute.value) {
+      if (!controller.mute.value) {
         iconPath = 'assets/icons/sound.png';
-        customIcon = _.customIcons.sound;
+        customIcon = controller.customIcons.sound;
       }
 
       return PlayerButton(
-        size: responsive.ip(_.fullscreen.value ? 5 : 7),
+        size: responsive.ip(controller.fullscreen.value ? 5 : 7),
         circle: false,
         backgrounColor: Colors.transparent,
         iconColor: Colors.white,
         iconPath: iconPath,
         customIcon: customIcon,
         onPressed: () {
-          _.setMute(!_.mute.value);
+          controller.setMute(!controller.mute.value);
         },
       );
     });

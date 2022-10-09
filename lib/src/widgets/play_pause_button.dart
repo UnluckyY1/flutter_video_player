@@ -7,7 +7,7 @@ import 'player_button.dart';
 
 class PlayPauseButton extends StatelessWidget {
   final double size;
-  const PlayPauseButton({Key? key, this.size = 40}) : super(key: key);
+  const PlayPauseButton({this.size = 40, super.key});
 
   @override
   Widget build(BuildContext context) {

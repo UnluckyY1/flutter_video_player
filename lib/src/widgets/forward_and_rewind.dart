@@ -4,16 +4,15 @@ import 'package:flutter_video_player/src/widgets/ripple_side.dart';
 import 'package:flutter_video_player/src/widgets/transitions.dart';
 
 class VideoCoreForwardAndRewind extends StatelessWidget {
-  const VideoCoreForwardAndRewind({
-    Key? key,
-    required this.showRewind,
-    required this.showForward,
-    required this.forwardSeconds,
-    required this.rewindSeconds,
-  }) : super(key: key);
-
   final bool showRewind, showForward;
   final int rewindSeconds, forwardSeconds;
+
+  const VideoCoreForwardAndRewind(
+      {required this.showRewind,
+      required this.showForward,
+      required this.forwardSeconds,
+      required this.rewindSeconds,
+      super.key});
 
   @override
   Widget build(BuildContext context) {

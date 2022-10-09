@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart';
 
 class VideoCoreForwardAndRewindLayout extends StatelessWidget {
   const VideoCoreForwardAndRewindLayout({
-    Key? key,
     required this.rewind,
     required this.forward,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Widget rewind;
   final Widget forward;

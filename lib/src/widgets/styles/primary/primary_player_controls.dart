@@ -9,26 +9,26 @@ import 'package:flutter_video_player/src/widgets/styles/primary/bottom_controls.
 
 class PrimaryVideoPlayerControls extends StatelessWidget {
   final Responsive responsive;
-  const PrimaryVideoPlayerControls({Key? key, required this.responsive})
-      : super(key: key);
+
+  const PrimaryVideoPlayerControls({required this.responsive, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _ = FlutterVideoPlayerController.of(context);
+    final controller = FlutterVideoPlayerController.of(context);
 
     return ControlsContainer(
       child: Stack(
         alignment: Alignment.center,
         children: [
           // RENDER A CUSTOM HEADER
-          if (_.header != null)
+          if (controller.header != null)
             Positioned(
               left: 0,
               right: 0,
               top: 0,
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: _.header!,
+                child: controller.header!,
               ),
             ),
           SizedBox(
@@ -39,43 +39,43 @@ class PrimaryVideoPlayerControls extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (_.enabledButtons.rewindAndfastForward) ...[
+              if (controller.enabledButtons.rewindAndfastForward) ...[
                 PlayerButton(
-                  onPressed: _.rewind,
-                  size: responsive.ip(_.fullscreen.value ? 8 : 12),
+                  onPressed: controller.rewind,
+                  size: responsive.ip(controller.fullscreen.value ? 8 : 12),
                   iconColor: Colors.white,
                   backgrounColor: Colors.transparent,
                   iconPath: 'assets/icons/rewind.png',
-                  customIcon: _.customIcons.rewind,
+                  customIcon: controller.customIcons.rewind,
                 ),
                 const SizedBox(width: 10),
               ],
-              if (_.enabledButtons.playPauseAndRepeat)
+              if (controller.enabledButtons.playPauseAndRepeat)
                 RxBuilder(
                     //observables: [_.showSwipeDuration],
                     //observables: [_.swipeDuration],
                     (__) {
-                  _.dataStatus.status.value;
-                  if (!_.showSwipeDuration.value &&
-                      !_.dataStatus.error &&
-                      !_.dataStatus.loading &&
-                      !_.isBuffering.value) {
+                  controller.dataStatus.status.value;
+                  if (!controller.showSwipeDuration.value &&
+                      !controller.dataStatus.error &&
+                      !controller.dataStatus.loading &&
+                      !controller.isBuffering.value) {
                     return PlayPauseButton(
-                      size: responsive.ip(_.fullscreen.value ? 8 : 13),
+                      size: responsive.ip(controller.fullscreen.value ? 8 : 13),
                     );
                   } else {
                     return const SizedBox();
                   }
                 }),
-              if (_.enabledButtons.rewindAndfastForward) ...[
+              if (controller.enabledButtons.rewindAndfastForward) ...[
                 const SizedBox(width: 10),
                 PlayerButton(
-                  onPressed: _.fastForward,
+                  onPressed: controller.fastForward,
                   iconColor: Colors.white,
                   backgrounColor: Colors.transparent,
-                  size: responsive.ip(_.fullscreen.value ? 8 : 12),
+                  size: responsive.ip(controller.fullscreen.value ? 8 : 12),
                   iconPath: 'assets/icons/fast-forward.png',
-                  customIcon: _.customIcons.fastForward,
+                  customIcon: controller.customIcons.fastForward,
                 ),
               ]
             ],

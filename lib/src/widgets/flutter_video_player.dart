@@ -1,14 +1,11 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu/ui.dart';
 import 'package:flutter_video_player/flutter_video_player.dart';
 import 'package:flutter_video_player/src/helpers/responsive.dart';
+import 'package:flutter_video_player/src/widgets/closed_caption_view.dart';
 import 'package:flutter_video_player/src/widgets/styles/primary/primary_player_controls.dart';
 import 'package:flutter_video_player/src/widgets/styles/secondary/secondary_player_controls.dart';
-
-import 'closed_caption_view.dart';
 
 class FlutterVideoPlayer extends StatefulWidget {
   final FlutterVideoPlayerController controller;
@@ -30,15 +27,15 @@ class FlutterVideoPlayer extends StatefulWidget {
   )? customIcons;
 
   const FlutterVideoPlayer({
-    Key? key,
     required this.controller,
     this.header,
     this.bottomRight,
     this.customIcons,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  _FlutterVideoPlayerState createState() => _FlutterVideoPlayerState();
+  State<FlutterVideoPlayer> createState() => _FlutterVideoPlayerState();
 }
 
 class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
@@ -52,42 +49,44 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
           height: 0.0,
           child: LayoutBuilder(
             builder: (ctx, constraints) {
-              FlutterVideoPlayerController _ = widget.controller;
+              FlutterVideoPlayerController controller = widget.controller;
               final responsive = Responsive(
                 constraints.maxWidth,
                 constraints.maxHeight,
               );
 
               if (widget.customIcons != null) {
-                _.customIcons = widget.customIcons!(responsive);
+                controller.customIcons = widget.customIcons!(responsive);
               }
 
               if (widget.header != null) {
-                _.header = widget.header!(context, _, responsive);
+                controller.header =
+                    widget.header!(context, controller, responsive);
               }
 
               if (widget.bottomRight != null) {
-                _.bottomRight = widget.bottomRight!(context, _, responsive);
+                controller.bottomRight =
+                    widget.bottomRight!(context, controller, responsive);
               }
 
               return Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (_.windows)
+                  if (controller.windows)
                     RxBuilder(
                         //observables: [_.videoFit],
                         (__) {
                       //print("NATIVE HAS BEEN REBUILT ${_.videoPlayerControllerWindows}");
-                      _.dataStatus.status.value;
-                      if (_.videoPlayerControllerWindows == null) {
+                      controller.dataStatus.status.value;
+                      if (controller.videoPlayerControllerWindows == null) {
                         return const Text('Loading');
                       }
 
                       return Stack(
                         fit: StackFit.expand,
                         children: [
-                          Video(
-                            player: _.videoPlayerControllerWindows!,
+                          NativeVideo(
+                            player: controller.videoPlayerControllerWindows!,
                             showControls: false,
                           ),
                         ],
@@ -97,7 +96,7 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
                     RxBuilder(
                         //observables: [_.videoFit],
                         (__) {
-                      _.dataStatus.status.value;
+                      controller.dataStatus.status.value;
                       if (kDebugMode) {
                         print('Fit is ${widget.controller.videoFit.value}');
                       }
@@ -105,22 +104,29 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
                         child: FittedBox(
                           fit: widget.controller.videoFit.value,
                           child: SizedBox(
-                            width: _.videoPlayerController != null ? _.videoPlayerController!.value.size.width : 640,
-                            height: _.videoPlayerController != null ? _.videoPlayerController!.value.size.height : 480,
-                            child: _.videoPlayerController != null
-                                ? VideoPlayer(_.videoPlayerController!)
+                            width: controller.videoPlayerController != null
+                                ? controller
+                                    .videoPlayerController!.value.size.width
+                                : 640,
+                            height: controller.videoPlayerController != null
+                                ? controller
+                                    .videoPlayerController!.value.size.height
+                                : 480,
+                            child: controller.videoPlayerController != null
+                                ? VideoPlayer(controller.videoPlayerController!)
                                 : const SizedBox(),
                           ),
                         ),
                       );
                     }),
                   ClosedCaptionView(responsive: responsive),
-                  if (_.controlsEnabled && _.controlsStyle == ControlsStyle.primary)
+                  if (controller.controlsEnabled &&
+                      controller.controlsStyle == ControlsStyle.primary)
                     PrimaryVideoPlayerControls(
                       responsive: responsive,
                     ),
-                  if (_.controlsEnabled &&
-                      _.controlsStyle == ControlsStyle.secondary)
+                  if (controller.controlsEnabled &&
+                      controller.controlsStyle == ControlsStyle.secondary)
                     SecondaryVideoPlayerControls(
                       responsive: responsive,
                     ),
@@ -129,16 +135,6 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
             },
           )),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
 

@@ -11,8 +11,8 @@ import 'package:flutter_video_player/src/widgets/video_fit_button.dart';
 
 class SecondaryBottomControls extends StatelessWidget {
   final Responsive responsive;
-  const SecondaryBottomControls({Key? key, required this.responsive})
-      : super(key: key);
+
+  const SecondaryBottomControls({required this.responsive, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -69,20 +69,6 @@ class SecondaryBottomControls extends StatelessWidget {
                       );
                     },
                   ),
-                  // PlayerButton(
-                  //   onPressed: _.rewind,
-                  //   size: buttonsSize,
-                  //   iconColor: Colors.white,
-                  //   backgrounColor: Colors.transparent,
-                  //   iconPath: 'assets/icons/rewind.png',
-                  // ),
-                  // PlayerButton(
-                  //   onPressed: _.fastForward,
-                  //   iconColor: Colors.white,
-                  //   backgrounColor: Colors.transparent,
-                  //   size: buttonsSize,
-                  //   iconPath: 'assets/icons/fast-forward.png',
-                  // ),
                   const SizedBox(width: 5),
                 ],
               ),

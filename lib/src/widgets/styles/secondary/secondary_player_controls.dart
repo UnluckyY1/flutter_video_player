@@ -4,11 +4,10 @@ import 'package:flutter_video_player/src/helpers/responsive.dart';
 import 'package:flutter_video_player/src/widgets/styles/controls_container.dart';
 import 'package:flutter_video_player/src/widgets/styles/secondary/secondary_bottom_controls.dart';
 
-
 class SecondaryVideoPlayerControls extends StatelessWidget {
   final Responsive responsive;
-  const SecondaryVideoPlayerControls({Key? key, required this.responsive})
-      : super(key: key);
+
+  const SecondaryVideoPlayerControls({required this.responsive, super.key});
 
   @override
   Widget build(BuildContext context) {
