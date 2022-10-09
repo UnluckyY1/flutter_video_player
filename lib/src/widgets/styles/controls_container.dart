@@ -64,7 +64,7 @@ class ControlsContainer extends StatelessWidget {
       _tappedOnce = Timer(const Duration(milliseconds: 300), () {
         if (kDebugMode) {
           print(
-              "_____________________hidden here 0____________________________");
+              '_____________________hidden here 0____________________________');
         }
         tappedTwice = false;
         //_dragInitialDelta = Offset.zero;
@@ -108,7 +108,7 @@ class ControlsContainer extends StatelessWidget {
         playing = controller.playerStatus.playing;
         controller.videoSeekToNextSeconds(
             _defaultSeekAmount * controller.doubleTapCount.value, playing);
-        if (kDebugMode) print("tapped is false here");
+        if (kDebugMode) print('tapped is false here');
         tappedTwice = false;
         controller.rewindIcons.value = false;
         controller.forwardIcons.value = false;
@@ -149,7 +149,7 @@ class ControlsContainer extends StatelessWidget {
         volume <= 1 &&
         differenceOfExists((controller.volume.value * 100).round(),
             (volume * 100).round(), 2)) {
-      if (kDebugMode) print("Volume$volume");
+      if (kDebugMode) print('Volume$volume');
       //print("current ${(controller.volume.value*100).round()}");
       //print("new ${(volume*100).round()}");
       controller.setVolume(volume);
@@ -203,7 +203,7 @@ class ControlsContainer extends StatelessWidget {
         brightness <= 1 &&
         differenceOfExists((controller.brightness.value * 100).round(),
             (brightness * 100).round(), 2)) {
-      if (kDebugMode) print("brightness $brightness");
+      if (kDebugMode) print('brightness $brightness');
       //brightness
       controller.setBrightness(brightness);
     }
@@ -369,8 +369,8 @@ class ControlsContainer extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     _.swipeDuration.value > 0
-                        ? "+ ${printDuration(Duration(seconds: _.swipeDuration.value))}"
-                        : "- ${printDuration(Duration(seconds: _.swipeDuration.value))}",
+                        ? '+ ${printDuration(Duration(seconds: _.swipeDuration.value))}'
+                        : '- ${printDuration(Duration(seconds: _.swipeDuration.value))}',
                     style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
@@ -501,7 +501,7 @@ class ControlsContainer extends StatelessWidget {
               _forwardDragStart(position, _);
               _dragInitialDelta = delta;
             } else {
-              if (kDebugMode) print("##############out###############");
+              if (kDebugMode) print('##############out###############');
               gettingNotification = true;
             }
           }
@@ -552,7 +552,7 @@ class ControlsContainer extends StatelessWidget {
                 //print("left");
               }
             } else {
-              if (kDebugMode) print("out");
+              if (kDebugMode) print('out');
               gettingNotification = true;
             }
             //}

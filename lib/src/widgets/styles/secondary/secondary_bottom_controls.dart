@@ -9,8 +9,6 @@ import 'package:flutter_video_player/src/widgets/play_pause_button.dart';
 import 'package:flutter_video_player/src/widgets/player_slider.dart';
 import 'package:flutter_video_player/src/widgets/video_fit_button.dart';
 
-
-
 class SecondaryBottomControls extends StatelessWidget {
   final Responsive responsive;
   const SecondaryBottomControls({Key? key, required this.responsive})
@@ -53,14 +51,14 @@ class SecondaryBottomControls extends StatelessWidget {
                   RxBuilder(
                     //observables: [_.duration, _.position],
                     (__) {
-                      String text = "";
+                      String text = '';
                       if (_.duration.value.inMinutes >= 60) {
                         // if the duration is >= 1 hour
                         text =
-                            "${printDurationWithHours(_.position.value)} / ${printDurationWithHours(_.duration.value)}";
+                            '${printDurationWithHours(_.position.value)} / ${printDurationWithHours(_.duration.value)}';
                       } else {
                         text =
-                            "${printDuration(_.position.value)} / ${printDuration(_.duration.value)}";
+                            '${printDuration(_.position.value)} / ${printDuration(_.duration.value)}';
                       }
                       return Padding(
                         padding: const EdgeInsets.only(right: 5),

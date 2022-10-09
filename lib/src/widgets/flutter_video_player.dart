@@ -80,23 +80,12 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
                       //print("NATIVE HAS BEEN REBUILT ${_.videoPlayerControllerWindows}");
                       _.dataStatus.status.value;
                       if (_.videoPlayerControllerWindows == null) {
-                        return const Text("Loading");
+                        return const Text('Loading');
                       }
 
                       return Stack(
                         fit: StackFit.expand,
                         children: [
-                          /*
-                          Platform.isWindows
-                              ? NativeVideo(
-                                  player: _.videoPlayerControllerWindows!,
-                                  showControls: false,
-                                )
-                              : Video(
-                                  player: _.videoPlayerControllerWindows!,
-                                  showControls: false,
-                                ),
-                           */
                           Video(
                             player: _.videoPlayerControllerWindows!,
                             showControls: false,
@@ -110,26 +99,23 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
                         (__) {
                       _.dataStatus.status.value;
                       if (kDebugMode) {
-                        print("Fit is ${widget.controller.videoFit.value}");
+                        print('Fit is ${widget.controller.videoFit.value}');
                       }
                       return SizedBox.expand(
                         child: FittedBox(
                           fit: widget.controller.videoFit.value,
                           child: SizedBox(
-                            width: _.videoPlayerController != null
-                                ? _.videoPlayerController!.value.size.width
-                                : 640,
-                            height: _.videoPlayerController != null
-                                ? _.videoPlayerController!.value.size.height
-                                : 480,
-                            child: VideoPlayer(_.videoPlayerController!),
+                            width: _.videoPlayerController != null ? _.videoPlayerController!.value.size.width : 640,
+                            height: _.videoPlayerController != null ? _.videoPlayerController!.value.size.height : 480,
+                            child: _.videoPlayerController != null
+                                ? VideoPlayer(_.videoPlayerController!)
+                                : const SizedBox(),
                           ),
                         ),
                       );
                     }),
                   ClosedCaptionView(responsive: responsive),
-                  if (_.controlsEnabled &&
-                      _.controlsStyle == ControlsStyle.primary)
+                  if (_.controlsEnabled && _.controlsStyle == ControlsStyle.primary)
                     PrimaryVideoPlayerControls(
                       responsive: responsive,
                     ),

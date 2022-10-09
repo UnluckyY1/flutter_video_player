@@ -2,7 +2,7 @@ import 'package:flutter_meedu/meedu.dart';
 
 enum DataStatus { none, loading, loaded, error }
 
-class MeeduPlayerDataStatus {
+class VideoPlayerDataStatus {
   Rx<DataStatus> status = Rx(DataStatus.none);
 
   bool get none => status.value == DataStatus.none;

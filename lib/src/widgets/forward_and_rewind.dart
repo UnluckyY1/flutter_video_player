@@ -3,7 +3,6 @@ import 'package:flutter_video_player/src/widgets/rewind_and_forward_layout.dart'
 import 'package:flutter_video_player/src/widgets/ripple_side.dart';
 import 'package:flutter_video_player/src/widgets/transitions.dart';
 
-
 class VideoCoreForwardAndRewind extends StatelessWidget {
   const VideoCoreForwardAndRewind({
     Key? key,
@@ -22,14 +21,14 @@ class VideoCoreForwardAndRewind extends StatelessWidget {
       rewind: CustomOpacityTransition(
         visible: showRewind,
         child: ForwardAndRewindRippleSide(
-          text: "$rewindSeconds Sec",
+          text: '$rewindSeconds Sec',
           side: RippleSide.left,
         ),
       ),
       forward: CustomOpacityTransition(
         visible: showForward,
         child: ForwardAndRewindRippleSide(
-          text: "$forwardSeconds Sec",
+          text: '$forwardSeconds Sec',
           side: RippleSide.right,
         ),
       ),

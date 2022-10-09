@@ -2,7 +2,7 @@ import 'package:flutter_meedu/meedu.dart';
 
 enum PlayerStatus { stopped, playing, paused }
 
-class MeeduPlayerStatus {
+class VideoPlayerStatus {
   Rx<PlayerStatus> status = Rx(PlayerStatus.paused);
 
   bool get playing {

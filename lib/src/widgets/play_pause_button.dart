@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_meedu/ui.dart';
 import 'package:flutter_video_player/flutter_video_player.dart';
 
-
 import 'player_button.dart';
 
 class PlayPauseButton extends StatelessWidget {

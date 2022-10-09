@@ -64,7 +64,7 @@ class PrimaryVideoPlayerControls extends StatelessWidget {
                       size: responsive.ip(_.fullscreen.value ? 8 : 13),
                     );
                   } else {
-                    return Container();
+                    return const SizedBox();
                   }
                 }),
               if (_.enabledButtons.rewindAndfastForward) ...[

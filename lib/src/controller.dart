@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:dio/adapter.dart';
+import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +14,8 @@ import 'package:flutter_video_player/src/widgets/fullscreen_page.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:volume_controller/volume_controller.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:dio/dio.dart';
 
 enum ControlsStyle { primary, secondary }
 
@@ -37,11 +37,11 @@ class FlutterVideoPlayerController {
 
   /// the playerStatus to notify the player events like paused,playing or stopped
   /// [playerStatus] has a [status] observable
-  final MeeduPlayerStatus playerStatus = MeeduPlayerStatus();
+  final VideoPlayerStatus playerStatus = VideoPlayerStatus();
 
   /// the dataStatus to notify the load sources events
   /// [dataStatus] has a [status] observable
-  final MeeduPlayerDataStatus dataStatus = MeeduPlayerDataStatus();
+  final VideoPlayerDataStatus dataStatus = VideoPlayerDataStatus();
   final Color colorTheme;
   final bool controlsEnabled;
   String? _errorText;
@@ -363,14 +363,14 @@ class FlutterVideoPlayerController {
         },
       );
     } else {
-      if (kDebugMode) print("hotkeys are registered ");
+      if (kDebugMode) print('hotkeys are registered ');
     }
     //await HotKeyManager.instance.unregister(_hotKey);
   }
 
   Future<String> extractAudioAndVideoTs(
     String m3u8, {
-    String initialSubtitle = "",
+    String initialSubtitle = '',
     String Function(String quality)? formatter,
     bool descending = true,
   }) async {
@@ -399,20 +399,20 @@ class FlutterVideoPlayerController {
     final RegExp netRegxUrl = RegExp(r'^(http|https):\/\/([\w.]+\/?)\S*');
     final RegExp netRegx2 = RegExp(r'(.*)\r?\/');
     final RegExp regExpPlaylist = RegExp(
-      r"#EXT-X-STREAM-INF:(?:.*,RESOLUTION=(\d+x\d+))?,?(.*)\r?\n(.*)",
+      r'#EXT-X-STREAM-INF:(?:.*,RESOLUTION=(\d+x\d+))?,?(.*)\r?\n(.*)',
       caseSensitive: false,
       multiLine: true,
     );
     final RegExp regExpAudio = RegExp(
-      r"""^#EXT-X-MEDIA:TYPE=AUDIO(?:.*,URI="(.*m3u8.*)")""",
+      r'''^#EXT-X-MEDIA:TYPE=AUDIO(?:.*,URI="(.*m3u8.*)")''',
       caseSensitive: false,
       multiLine: true,
     );
     final RegExp regExpListOfLinks =
-        RegExp("#EXTINF:.+?\n+(.+)", multiLine: true, caseSensitive: false);
+        RegExp('#EXTINF:.+?\n+(.+)', multiLine: true, caseSensitive: false);
     Response res = await dio.get(m3u8);
     //GET m3u8 file
-    String content = "";
+    String content = '';
     if (res.statusCode == 200) {
       content = res.data;
 
@@ -434,7 +434,7 @@ class FlutterVideoPlayerController {
 
         if (!isNetwork) {
           final String? dataURL = playlist!.group(0);
-          playlistUrl = "$dataURL$sourceURL";
+          playlistUrl = '$dataURL$sourceURL';
         }
 
         //Find audio url
@@ -445,7 +445,7 @@ class FlutterVideoPlayerController {
           String audioUrl = audio;
 
           if (!isNetwork && match != null) {
-            audioUrl = "${match.group(0)}$audio";
+            audioUrl = '${match.group(0)}$audio';
           }
           audioUrls.add(audioUrl);
         }
@@ -456,10 +456,10 @@ class FlutterVideoPlayerController {
       List<String> qualityKeys = sourceUrls.keys.toList();
       qualityKeys.sort((a, b) {
         try {
-          return int.parse(a.split("x")[0])
-              .compareTo(int.parse(b.split("x")[0]));
+          return int.parse(a.split('x')[0])
+              .compareTo(int.parse(b.split('x')[0]));
         } catch (_) {
-          if (kDebugMode) print("error comparing qualities hls,$_");
+          if (kDebugMode) print('error comparing qualities hls,$_');
           return -1;
         }
       });
@@ -469,9 +469,9 @@ class FlutterVideoPlayerController {
             regExpListOfLinks.allMatches(content).toList();
         String baseUrl = m3u8;
         for (final element in listOfLinks) {
-          final bool isNetwork = netRegxUrl.hasMatch(element.group(1) ?? "");
+          final bool isNetwork = netRegxUrl.hasMatch(element.group(1) ?? '');
           if (!isNetwork) {
-            content.replaceAll(element.group(1) ?? "",
+            content.replaceAll(element.group(1) ?? '',
                 "${baseUrl.substring(0, baseUrl.lastIndexOf('/'))}/${element.group(1) ?? ""}");
           }
         }
@@ -479,9 +479,9 @@ class FlutterVideoPlayerController {
       }
 
       //print(downloadLinks);
-      return "";
+      return '';
     } else {
-      return "";
+      return '';
     }
   }
 /*
@@ -534,10 +534,10 @@ class FlutterVideoPlayerController {
   Player _createVideoControllerWindows(DataSource dataSource, Duration seekTo) {
     Random random = Random();
     int randomNumber = random.nextInt(1000);
-    String refer = "";
+    String refer = '';
     if (dataSource.type == DataSourceType.network) {
       if (dataSource.httpHeaders != null) {
-        refer = dataSource.httpHeaders!["Referer"] ?? "";
+        refer = dataSource.httpHeaders!['Referer'] ?? '';
       }
     }
     //print('--http-referrer=' + refer);
@@ -596,7 +596,7 @@ class FlutterVideoPlayerController {
     Duration seekTo = Duration.zero,
   }) async {
     if (seekTo != Duration.zero) {
-      if (kDebugMode) print("Called seek function to$seekTo");
+      if (kDebugMode) print('Called seek function to$seekTo');
       await this.seekTo(seekTo);
     }
 
@@ -629,7 +629,7 @@ class FlutterVideoPlayerController {
   void _listener({Player? player}) {
     if (player != null) {
       dataStatus.status.stream.listen((event) {
-        if (kDebugMode) print("dataStatus $event");
+        if (kDebugMode) print('dataStatus $event');
       });
       postionStream ??= player.positionStream.listen((event) {
         _duration.value = _videoPlayerControllerWindows!.position.duration!;
@@ -792,7 +792,7 @@ class FlutterVideoPlayerController {
       } else {
         // set the video duration
         if (kDebugMode) {
-          print("Duration is ${_videoPlayerController!.value.duration}");
+          print('Duration is ${_videoPlayerController!.value.duration}');
         }
         _duration.value = _videoPlayerController!.value.duration;
 
@@ -850,7 +850,7 @@ class FlutterVideoPlayerController {
   Future<void> seekTo(Duration position) async {
     _position.value = position;
     if (kDebugMode) {
-      print("duration in seek function is ${duration.value.toString()}");
+      print('duration in seek function is ${duration.value.toString()}');
     }
     if (duration.value.inSeconds != 0) {
       if (position <= duration.value) {
@@ -876,7 +876,7 @@ class FlutterVideoPlayerController {
       _timerForSeek =
           Timer.periodic(const Duration(milliseconds: 200), (Timer t) async {
         //_timerForSeek = null;
-        if (kDebugMode) print("SEEK CALLED");
+        if (kDebugMode) print('SEEK CALLED');
         if (duration.value.inSeconds != 0) {
           if (position <= duration.value) {
             if (windows) {
@@ -1005,7 +1005,7 @@ class FlutterVideoPlayerController {
         try {
           _currentVolume.value = _videoPlayerControllerWindows!.general.volume;
         } catch (e) {
-          if (kDebugMode) print("currentVolume $e");
+          if (kDebugMode) print('currentVolume $e');
           //throw 'Failed to get current volume';
           //return 0;
         }
@@ -1019,7 +1019,7 @@ class FlutterVideoPlayerController {
               _currentVolume.value =
                   _videoPlayerControllerWindows!.general.volume;
             } catch (e) {
-              if (kDebugMode) print("currentVolume $e");
+              if (kDebugMode) print('currentVolume $e');
               //throw 'Failed to get current volume';
               //return 0;
             }
@@ -1030,7 +1030,7 @@ class FlutterVideoPlayerController {
       try {
         _currentVolume.value = await VolumeController().getVolume();
       } catch (e) {
-        if (kDebugMode) print("currentVolume $e");
+        if (kDebugMode) print('currentVolume $e');
         //throw 'Failed to get current brightness';
         //return 0;
       }
@@ -1127,7 +1127,7 @@ class FlutterVideoPlayerController {
       });
     } else {
       _timer = Timer(const Duration(seconds: 5), () {
-        if (kDebugMode) print("hidden");
+        if (kDebugMode) print('hidden');
         controls = false;
         _timer = null;
         swipeDuration.value = 0;
@@ -1150,7 +1150,7 @@ class FlutterVideoPlayerController {
     }
     _fullscreen.value = true;
     final route = MaterialPageRoute(
-      builder: (_) => MeeduPlayerFullscreenPage(controller: this),
+      builder: (_) => VideoPlayerFullscreenPage(controller: this),
     );
 
     await Navigator.push(context, route);
@@ -1252,9 +1252,9 @@ class FlutterVideoPlayerController {
 
   Future<void> getUserPreferenceForFit() async {
     prefs = await SharedPreferences.getInstance();
-    String fitValue = (prefs?.getString('fit')) ?? "fill";
+    String fitValue = (prefs?.getString('fit')) ?? 'fill';
     _videoFit.value = fits.firstWhere((element) => element.name == fitValue);
-    if (kDebugMode) print("Last fit used was ${_videoFit.value.name}");
+    if (kDebugMode) print('Last fit used was ${_videoFit.value.name}');
   }
 
   Future<void> setUserPreferenceForBrightness() async {
@@ -1266,7 +1266,7 @@ class FlutterVideoPlayerController {
     prefs = await SharedPreferences.getInstance();
     double brightnessValue = (prefs?.getDouble('brightness')) ?? 0.5;
     setBrightness(brightnessValue);
-    if (kDebugMode) print("Last Brightness used was $brightnessValue");
+    if (kDebugMode) print('Last Brightness used was $brightnessValue');
   }
 
   /// Toggle Change the videofit accordingly
@@ -1280,7 +1280,7 @@ class FlutterVideoPlayerController {
     }
     if (kDebugMode) print(_videoFit.value);
     videoFitChangedTimer = Timer(const Duration(seconds: 1), () {
-      if (kDebugMode) print("hidden videoFit Changed");
+      if (kDebugMode) print('hidden videoFit Changed');
       videoFitChangedTimer = null;
       videoFitChanged.value = false;
       setUserPreferenceForFit();
@@ -1330,9 +1330,22 @@ class FlutterVideoPlayerController {
     }
   }*/
 
+  Future<void> fullScreenClosed([AsyncCallback? restoreHotkeysCallback]) async {
+    if (kDebugMode) print('Video player closed');
+    fullscreen.value = false;
+    if (windows) {
+      screenManager.setWindowsFullScreen(false, this);
+      HotKeyManager.instance
+          .unregisterAll()
+          .then((value) => restoreHotkeysCallback?.call());
+    } else {
+      screenManager.setDefaultOverlaysAndOrientations();
+    }
+  }
+
   Future<void> videoPlayerClosed(
       [AsyncCallback? restoreHotkeysCallback]) async {
-    if (kDebugMode) print("Video player closed");
+    if (kDebugMode) print('Video player closed');
     fullscreen.value = false;
     resetBrightness();
     if (windows) {
@@ -1365,10 +1378,10 @@ class FlutterVideoPlayerController {
       }
       //disposeVideoPlayerController();
       if (onVideoPlayerClosed != null) {
-        if (kDebugMode) print("Called");
+        if (kDebugMode) print('Called');
         onVideoPlayerClosed!();
       } else {
-        if (kDebugMode) print("Didnt get Called");
+        if (kDebugMode) print('Didnt get Called');
       }
     });
   }

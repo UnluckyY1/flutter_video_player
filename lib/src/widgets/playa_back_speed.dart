@@ -3,7 +3,6 @@ import 'package:flutter_meedu/ui.dart';
 import 'package:flutter_video_player/flutter_video_player.dart';
 import 'package:flutter_video_player/src/helpers/responsive.dart';
 
-
 class PlayBackSpeedButton extends StatelessWidget {
   final Responsive responsive;
   final TextStyle textStyle;
