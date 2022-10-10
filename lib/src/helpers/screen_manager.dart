@@ -31,6 +31,15 @@ class ScreenManager {
   Future<void> setWindowsFullScreen(
       bool state, FlutterVideoPlayerController _) async {
     _.fullscreen.value = state;
+    if (state) {
+      await windowManager.hide();
+    } else {
+      await windowManager
+          .setBounds((await windowManager.getBounds()).inflate(1));
+
+      await windowManager
+          .setBounds((await windowManager.getBounds()).inflate(-1));
+    }
 
     await windowManager.setFullScreen(state);
   }
