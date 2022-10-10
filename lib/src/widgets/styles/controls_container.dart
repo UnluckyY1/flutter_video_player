@@ -496,7 +496,7 @@ class ControlsContainer extends StatelessWidget {
               _forwardDragStart(position, _);
               _dragInitialDelta = delta;
             } else {
-              if (kDebugMode) print('##############out###############');
+              if (kDebugMode) debugPrint('##############out###############');
               gettingNotification = true;
             }
           }

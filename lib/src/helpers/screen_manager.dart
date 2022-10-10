@@ -1,8 +1,6 @@
-
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_video_player/flutter_video_player.dart';
-import 'package:window_manager/window_manager.dart';
 
 class ScreenManager {
   /// [orientations] the device orientation after exit of the fullscreen
@@ -30,21 +28,11 @@ class ScreenManager {
     AutoOrientation.portraitAutoMode();
   }
 
-  Future<void> setWindowsFullScreen(bool state, FlutterVideoPlayerController _) async {
+  Future<void> setWindowsFullScreen(
+      bool state, FlutterVideoPlayerController _) async {
     _.fullscreen.value = state;
-    //print(await windowManager.isFullScreen());
-    await windowManager.ensureInitialized();
+
     await windowManager.setFullScreen(state);
-    /*
-    if (state) {
-      await windowManager.setFullScreen(state);
-    } else {
-      await windowManager.setFullScreen(state);
-      //Size size = await windowManager.getSize();
-      //await windowManager.setSize(Size(size.width + 1, size.height + 1));
-      //windowManager.restore();
-    }
-    */
   }
 
   Future<void> setOverlays(bool visible) async {
