@@ -36,14 +36,17 @@
 ```dart
   if (Platform.isWindows) {
     //init dart vlc
-    DartVLC.initialize();
+   await DartVLC.initialize();
+   //init windowManager
+   await windowManager.ensureInitialized();
     }
 ```
 Example:
 ```dart
 void main() {
 if (Platform.isWindows) {
-    DartVLC.initialize();
+  await  DartVLC.initialize();
+  await windowManager.ensureInitialized();
 }
 runApp(MyApp());
 }
