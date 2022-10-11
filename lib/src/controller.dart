@@ -594,6 +594,7 @@ class FlutterVideoPlayerController {
     await volumeStream?.cancel();
     await playBackStream?.cancel();
     await bufferStream?.cancel();
+
     postionStream = null;
     volumeStream = null;
     playBackStream = null;
@@ -827,9 +828,8 @@ class FlutterVideoPlayerController {
       _timerForSeek?.cancel();
       _timerForSeek =
           Timer.periodic(const Duration(milliseconds: 200), (Timer t) async {
-        //_timerForSeek = null;
         if (kDebugMode) print('SEEK CALLED');
-        if (duration.value.inSeconds != 0) {
+        if (duration.value.inSeconds > 0) {
           if (position <= duration.value) {
             if (isDesktop) {
               _videoPlayerControllerWindows?.seek(position);
@@ -963,11 +963,12 @@ class FlutterVideoPlayerController {
         _timerForGettingVolume?.cancel();
         _timerForGettingVolume =
             Timer.periodic(const Duration(milliseconds: 250), (Timer t) async {
-          _timerForGettingVolume = null;
-          if (duration.value.inSeconds != 0) {
+          if (duration.value.inSeconds > 0) {
             try {
-              _currentVolume.value =
-                  _videoPlayerControllerWindows!.general.volume;
+              if (_videoPlayerControllerWindows != null) {
+                _currentVolume.value =
+                    _videoPlayerControllerWindows!.general.volume;
+              }
             } catch (e) {
               if (kDebugMode) print('currentVolume $e');
               //throw 'Failed to get current volume';
@@ -1144,7 +1145,7 @@ class FlutterVideoPlayerController {
       timerForTrackingMouse?.cancel();
       _timerForSeek?.cancel();
       videoFitChangedTimer?.cancel();
-
+      _duration.close();
       _position.close();
       _playerEventSubs?.cancel();
       _sliderPosition.close();
@@ -1162,29 +1163,28 @@ class FlutterVideoPlayerController {
       removeWindowsListener();
       _videoPlayerControllerWindows?.dispose();
       _videoPlayerControllerWindows = null;
+      debugPrint('dispose video');
     } else {
-      if (_videoPlayerController != null) {
-        _timer?.cancel();
-        _timerForVolume?.cancel();
-        _timerForGettingVolume?.cancel();
-        timerForTrackingMouse?.cancel();
-        _timerForSeek?.cancel();
-        videoFitChangedTimer?.cancel();
-        _position.close();
-        _playerEventSubs?.cancel();
-        _sliderPosition.close();
-        _duration.close();
-        _buffered.close();
-        _closedCaptionEnabled.close();
-        _mute.close();
-        _fullscreen.close();
-        _showControls.close();
-        playerStatus.status.close();
-        dataStatus.status.close();
-        _videoPlayerController?.removeListener(_listener);
-        await _videoPlayerController?.dispose();
-        _videoPlayerController = null;
-      }
+      _timer?.cancel();
+      _timerForVolume?.cancel();
+      _timerForGettingVolume?.cancel();
+      timerForTrackingMouse?.cancel();
+      _timerForSeek?.cancel();
+      videoFitChangedTimer?.cancel();
+      _position.close();
+      _playerEventSubs?.cancel();
+      _sliderPosition.close();
+      _duration.close();
+      _buffered.close();
+      _closedCaptionEnabled.close();
+      _mute.close();
+      _fullscreen.close();
+      _showControls.close();
+      playerStatus.status.close();
+      dataStatus.status.close();
+      _videoPlayerController?.removeListener(_listener);
+      await _videoPlayerController?.dispose();
+      debugPrint('dispose video');
     }
   }
 
