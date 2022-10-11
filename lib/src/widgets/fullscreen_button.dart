@@ -31,9 +31,9 @@ class FullscreenButton extends StatelessWidget {
           onPressed: () {
             if (_.fullscreen.value) {
               Navigator.pop(context);
-              if (_.windows) _.screenManager.setWindowsFullScreen(false, _);
+              if (_.isDesktop) _.screenManager.setWindowsFullScreen(false, _);
             } else {
-              if (_.windows) _.screenManager.setWindowsFullScreen(true, _);
+              if (_.isDesktop) _.screenManager.setWindowsFullScreen(true, _);
 
               _.goToFullscreen(context);
             }

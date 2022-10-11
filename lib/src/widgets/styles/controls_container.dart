@@ -78,7 +78,7 @@ class ControlsContainer extends StatelessWidget {
 
   void _showRewindAndForward(
       int index, FlutterVideoPlayerController controller) async {
-    if (controller.windows) {
+    if (controller.isDesktop) {
       controller.screenManager
           .setWindowsFullScreen(!controller.fullscreen.value, controller);
     } else {
@@ -254,7 +254,7 @@ class ControlsContainer extends StatelessWidget {
         ),
       ),
       RxBuilder((__) {
-        if (_.windows) {
+        if (_.isDesktop) {
           return MouseRegion(
               cursor: _.showControls.value
                   ? SystemMouseCursors.basic
@@ -466,7 +466,7 @@ class ControlsContainer extends StatelessWidget {
   Widget videoControls(FlutterVideoPlayerController _, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (_.windows) {
+        if (_.isDesktop) {
           if (_.doubleTapCount.value != 0 || tappedTwice) {
             _rewind(_);
             tappedOnce(_, true);
@@ -478,7 +478,7 @@ class ControlsContainer extends StatelessWidget {
         _dragInitialDelta = Offset.zero;
       },
       onHorizontalDragUpdate: (DragUpdateDetails details) {
-        if (!_.windows) {
+        if (!_.isDesktop) {
           //if (!_.videoPlayerController!.value.isInitialized) {
           //return;
           //}
@@ -508,13 +508,13 @@ class ControlsContainer extends StatelessWidget {
         //_.videoPlayerController!.seekTo(position);
       },
       onHorizontalDragEnd: (DragEndDetails details) {
-        if (!_.windows) {
+        if (!_.isDesktop) {
           gettingNotification = false;
           _forwardDragEnd(_);
         }
       },
       onVerticalDragUpdate: (DragUpdateDetails details) {
-        if (!_.windows) {
+        if (!_.isDesktop) {
           final Offset position = details.localPosition;
           if (_dragInitialDelta == Offset.zero) {
             if (kDebugMode) print(details.globalPosition.dy);
@@ -533,7 +533,7 @@ class ControlsContainer extends StatelessWidget {
                 _dragInitialDelta = delta;
                 //print("right");
               } else {
-                if (!_.windows) {
+                if (!_.isDesktop) {
                   _brightnessDragStart(position, _);
                 }
                 _dragInitialDelta = delta;
@@ -549,7 +549,7 @@ class ControlsContainer extends StatelessWidget {
               if (isVolume) {
                 _volumeDragUpdate(position, _);
               } else {
-                if (!_.windows) {
+                if (!_.isDesktop) {
                   _brightnessDragUpdate(position, _);
                 }
               }
@@ -559,7 +559,7 @@ class ControlsContainer extends StatelessWidget {
         //_.videoPlayerController!.seekTo(position);
       },
       onVerticalDragEnd: (DragEndDetails details) {
-        if (!_.windows) {
+        if (!_.isDesktop) {
           //if (!_.videoPlayerController!.value.isInitialized) {
           // return;
           //}
@@ -567,7 +567,7 @@ class ControlsContainer extends StatelessWidget {
           if (isVolume) {
             _volumeDragEnd(_);
           } else {
-            if (!_.windows) {
+            if (!_.isDesktop) {
               _brightnessDragEnd(_);
             }
           }

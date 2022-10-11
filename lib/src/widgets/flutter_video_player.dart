@@ -72,7 +72,7 @@ class _FlutterVideoPlayerState extends State<FlutterVideoPlayer> {
               return Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (controller.windows)
+                  if (controller.isDesktop)
                     RxBuilder(
                         //observables: [_.videoFit],
                         (__) {

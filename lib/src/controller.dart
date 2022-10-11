@@ -187,7 +187,7 @@ class FlutterVideoPlayerController {
   Stream<bool> get onClosedCaptionEnabledChanged =>
       _closedCaptionEnabled.stream;
 
-  bool windows = false;
+  bool isDesktop = false;
 
   /// [isInPipMode] is true if pip mode is enabled
   //Rx<bool> get isInPipMode => _pipManager.isInPipMode;
@@ -238,10 +238,10 @@ class FlutterVideoPlayerController {
           color: colorTheme,
         );
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      windows = true;
+      isDesktop = true;
     }
     //check each
-    if (!windows) {
+    if (!isDesktop) {
       VolumeController().listener((newVolume) {
         volume.value = newVolume;
       });
@@ -256,17 +256,6 @@ class FlutterVideoPlayerController {
         }
       },
     );
-
-    //if (pipEnabled) {
-    // get the OS version and check if pip is available
-    //this._pipManager.checkPipAvailable().then(
-    //(value) => _pipAvailable.value = value,
-    //);
-    // listen the pip mode changes
-    //_pipModeWorker = _pipManager.isInPipMode.ever(this._onPipModeChanged);
-    //} else {
-    //_pipAvailable.value = false;
-    //}
   }
   Future<void> registerHotKeys() async {
     if (HotKeyManager.instance.registeredHotKeyList.isEmpty) {
@@ -484,24 +473,6 @@ class FlutterVideoPlayerController {
       return '';
     }
   }
-/*
-  Future<DataSource> checkIfm3u8AndNoLinks(DataSource dataSource) async {
-    //final RegExp netRegxUrl = RegExp(r'^(http|https):\/\/([\w.]+\/?)\S*');
-    if (dataSource.type == DataSourceType.network &&
-        Uri.parse(dataSource.source!).path.endsWith(".m3u8")) {
-      String newContent = await extractAudioAndVideoTs(dataSource.source!);
-      if (newContent != "") {
-        final File file =
-            File(join((await getTemporaryDirectory()).path, 'hls_link.m3u8'));
-        file.writeAsStringSync(newContent);
-        dataSource.file = file;
-        dataSource.type = DataSourceType.file;
-        return dataSource;
-      }
-    }
-    return dataSource;
-  }
-  */
 
   /// create a new video_player controller
   VideoPlayerController _createVideoController(DataSource dataSource) {
@@ -512,6 +483,7 @@ class FlutterVideoPlayerController {
           closedCaptionFile: dataSource.closedCaptionFile,
           package: dataSource.package,
         );
+
       case DataSourceType.network:
         return VideoPlayerController.network(
           dataSource.source!,
@@ -520,6 +492,7 @@ class FlutterVideoPlayerController {
           closedCaptionFile: dataSource.closedCaptionFile,
           httpHeaders: dataSource.httpHeaders ?? {},
         );
+
       default:
         return VideoPlayerController.file(
           dataSource.file!,
@@ -678,27 +651,7 @@ class FlutterVideoPlayerController {
         isBuffering.value =
             (playerStatus.status.value == PlayerStatus.playing) &&
                 (event != 100);
-        //print("p0 "+event.toString());
-        //print("p1 "+position.value.inSeconds.toString());
-        //print("p2 "+_buffered.value.last.end.inSeconds.toString());
       });
-
-      // set the current video position
-
-      // set the video buffered loaded
-      //final buffered = player.;
-
-      //if (buffered.isNotEmpty) {
-      //_buffered.value = buffered;
-      //isBuffering.value = value.isPlaying && position.inSeconds >= buffered.last.end.inSeconds;
-      //}
-
-      // save the volume value
-      //final volume = player.volume;
-      //if (!mute.value && _volumeBeforeMute != volume) {
-      //_volumeBeforeMute = volume;
-      //}
-
     } else {
       final value = _videoPlayerController!.value;
       // set the current video position
@@ -746,7 +699,7 @@ class FlutterVideoPlayerController {
       _autoplay = autoplay;
       _looping = looping;
       dataStatus.status.value = DataStatus.loading;
-      if (windows) {
+      if (isDesktop) {
         if (_videoPlayerControllerWindows != null &&
             _videoPlayerControllerWindows!.playback.isPlaying) {
           await pause(notify: false);
@@ -764,21 +717,23 @@ class FlutterVideoPlayerController {
       Player? oldControllerWindows = _videoPlayerControllerWindows;
 
       // create a new video_player controller using the dataSource
-      if (windows) {
-        //if(_videoPlayerControllerWindows==null){
+      if (isDesktop) {
         _videoPlayerControllerWindows =
             _createVideoControllerWindows(dataSource, seekTo);
-        //}else{
-        //_videoPlayerControllerWindows=setPlayerDataSource(dataSource, _videoPlayerControllerWindows!);
-        //}
-        //_videoPlayerControllerWindows!.seek(seekTo!);
+
         if (oldControllerWindows != null) {
           await removeWindowsListener();
           oldControllerWindows
               .dispose(); // dispose the previous video controller
         }
+
+        /// notify that video was loaded
+        dataStatus.status.value = DataStatus.loaded;
+
+        _listener(player: _videoPlayerControllerWindows);
       } else {
         _videoPlayerController = _createVideoController(dataSource);
+
         await _videoPlayerController!.initialize();
 
         if (oldController != null) {
@@ -788,15 +743,6 @@ class FlutterVideoPlayerController {
                 .dispose(); // dispose the previous video controller
           });
         }
-      }
-
-      if (windows) {
-        _listener(player: _videoPlayerControllerWindows);
-
-        /// notify that video was loaded
-        dataStatus.status.value = DataStatus.loaded;
-        playerStatus.status.value = PlayerStatus.paused;
-      } else {
         // set the video duration
 
         _duration.value = _videoPlayerController!.value.duration;
@@ -804,10 +750,11 @@ class FlutterVideoPlayerController {
         /// notify that video was loaded
         dataStatus.status.value = DataStatus.loaded;
 
-        await _initializePlayer(seekTo: seekTo);
         // listen the video player events
         _videoPlayerController!.addListener(_listener);
       }
+
+      await _initializePlayer(seekTo: seekTo);
     } catch (e, s) {
       if (kDebugMode) {
         print(e);
@@ -825,7 +772,7 @@ class FlutterVideoPlayerController {
     if (repeat) {
       await seekTo(Duration.zero);
     }
-    if (Platform.isWindows || Platform.isLinux) {
+    if (isDesktop) {
       _videoPlayerControllerWindows?.play();
       await getCurrentVolume();
     } else {
@@ -842,7 +789,7 @@ class FlutterVideoPlayerController {
   ///
   /// [notify] if is true and the events is not null we notifiy the event
   Future<void> pause({bool notify = true}) async {
-    if (Platform.isLinux || Platform.isWindows) {
+    if (isDesktop) {
       _videoPlayerControllerWindows?.pause();
       playerStatus.status.value = PlayerStatus.paused;
     } else {
@@ -859,13 +806,13 @@ class FlutterVideoPlayerController {
     }
     if (duration.value.inSeconds != 0) {
       if (position <= duration.value) {
-        if (windows) {
+        if (isDesktop) {
           _videoPlayerControllerWindows?.seek(position);
         } else {
           await _videoPlayerController?.seekTo(position);
         }
       } else {
-        if (windows) {
+        if (isDesktop) {
           _videoPlayerControllerWindows
               ?.seek(duration.value - const Duration(milliseconds: 100));
         } else {
@@ -884,13 +831,13 @@ class FlutterVideoPlayerController {
         if (kDebugMode) print('SEEK CALLED');
         if (duration.value.inSeconds != 0) {
           if (position <= duration.value) {
-            if (windows) {
+            if (isDesktop) {
               _videoPlayerControllerWindows?.seek(position);
             } else {
               await _videoPlayerController?.seekTo(position);
             }
           } else {
-            if (windows) {
+            if (isDesktop) {
               _videoPlayerControllerWindows
                   ?.seek(duration.value - const Duration(milliseconds: 100));
             } else {
@@ -926,7 +873,7 @@ class FlutterVideoPlayerController {
   ///   possible that your specific video cannot be slowed down, in which case
   ///   the plugin also reports errors.
   Future<void> setPlaybackSpeed(double speed) async {
-    if (windows) {
+    if (isDesktop) {
     } else {
       await _videoPlayerController?.setPlaybackSpeed(speed);
       _playbackSpeed.value = speed;
@@ -992,7 +939,7 @@ class FlutterVideoPlayerController {
   }
 
   Future<void> getCurrentBrightness() async {
-    if (!windows) {
+    if (!isDesktop) {
       try {
         _currentBrightness.value = await ScreenBrightness().current;
       } catch (e) {
@@ -1001,18 +948,16 @@ class FlutterVideoPlayerController {
         //return 0;
       }
     }
-    //return 0;
   }
 
   Future<void> getCurrentVolume() async {
-    if (Platform.isLinux || Platform.isWindows) {
+    if (isDesktop) {
       if (duration.value.inSeconds != 0) {
         try {
           _currentVolume.value = _videoPlayerControllerWindows!.general.volume;
         } catch (e) {
           if (kDebugMode) print('currentVolume $e');
-          //throw 'Failed to get current volume';
-          //return 0;
+          rethrow;
         }
       } else {
         _timerForGettingVolume?.cancel();
@@ -1044,7 +989,7 @@ class FlutterVideoPlayerController {
   }
 
   Future<void> setBrightness(double brightnes) async {
-    if (!windows) {
+    if (!isDesktop) {
       try {
         brightness.value = brightnes;
         ScreenBrightness().setScreenBrightness(brightnes);
@@ -1060,7 +1005,7 @@ class FlutterVideoPlayerController {
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
   /// linear scale.
   Future<void> setVolume(double volumeNew) async {
-    if (windows) {
+    if (isDesktop) {
       if (volumeNew <= 0) {
         volumeNew = 0;
       }
@@ -1094,7 +1039,7 @@ class FlutterVideoPlayerController {
   }
 
   Future<void> resetBrightness() async {
-    if (!windows) {
+    if (!isDesktop) {
       try {
         await ScreenBrightness().resetScreenBrightness();
       } catch (e) {
@@ -1111,7 +1056,6 @@ class FlutterVideoPlayerController {
       //print("Closed");
       screenManager.setOverlays(visible);
     }
-    //print(visible);
     _showControls.value = visible;
     _timer?.cancel();
     if (visible) {
@@ -1121,8 +1065,7 @@ class FlutterVideoPlayerController {
 
   /// create a tasks to hide controls after certain time
   void _hideTaskControls() {
-    
-    if (windows) {
+    if (isDesktop) {
       _timer = Timer(const Duration(seconds: 2), () {
         controls = false;
         _timer = null;
@@ -1147,7 +1090,7 @@ class FlutterVideoPlayerController {
     bool applyOverlaysAndOrientations = true,
   }) async {
     if (applyOverlaysAndOrientations) {
-      if (windows) {
+      if (isDesktop) {
         screenManager.setWindowsFullScreen(true, this);
       } else {
         screenManager.setFullScreenOverlaysAndOrientations();
@@ -1183,18 +1126,18 @@ class FlutterVideoPlayerController {
       looping: looping,
       seekTo: seekTo,
     );
-    if (windows) {
+    if (isDesktop) {
       registerHotKeys();
     }
-    if (!windows) {
+    if (!isDesktop) {
       getUserPreferenceForBrightness();
     }
     await goToFullscreen(context);
   }
 
-  /// dispose de video_player controller
+  /// dispose the video_player controller
   Future<void> dispose([AsyncCallback? restoreHotkeysCallback]) async {
-    if (windows) {
+    if (isDesktop) {
       _timer?.cancel();
       _timerForVolume?.cancel();
       _timerForGettingVolume?.cancel();
@@ -1297,23 +1240,9 @@ class FlutterVideoPlayerController {
     _videoFit.value = fit;
   }
 
-  /// enter to picture in picture mode only Android
-  ///
-  /// only available since Android 7
-  /*Future<void> enterPip(BuildContext context) async {
-    if (this.pipAvailable.value && this.pipEnabled) {
-      controls = false; // hide the controls
-      if (!fullscreen.value) {
-        // if the player is not in the fullscreen mode
-        _pipContextToFullscreen = context;
-        goToFullscreen(context, appliyOverlaysAndOrientations: false);
-      }
-      await _pipManager.enterPip();
-    }
-  }*/
   Future<void> videoSeekToNextSeconds(int seconds, bool playing) async {
     int position = 0;
-    if (windows) {
+    if (isDesktop) {
       position = _videoPlayerControllerWindows!.position.position!.inSeconds;
     } else {
       position = _videoPlayerController!.value.position.inSeconds;
@@ -1322,23 +1251,12 @@ class FlutterVideoPlayerController {
     if (playing) {
       await play();
     }
-    //
   }
-  /*
-  ///// listener for pip changes
-
-  void _onPipModeChanged(bool isInPipMode) {
-    // if the pip mode was closed and before enter to pip mode the player was not in fullscreen
-    if (!isInPipMode && _pipContextToFullscreen != null) {
-      Navigator.pop(_pipContextToFullscreen!); // close the fullscreen
-      _pipContextToFullscreen = null;
-    }
-  }*/
 
   Future<void> fullScreenClosed([AsyncCallback? restoreHotkeysCallback]) async {
     if (kDebugMode) print('Video player closed');
     fullscreen.value = false;
-    if (windows) {
+    if (isDesktop) {
       screenManager.setWindowsFullScreen(false, this);
       HotKeyManager.instance
           .unregisterAll()
@@ -1353,7 +1271,7 @@ class FlutterVideoPlayerController {
     if (kDebugMode) print('Video player closed');
     fullscreen.value = false;
     resetBrightness();
-    if (windows) {
+    if (isDesktop) {
       screenManager.setWindowsFullScreen(false, this);
       HotKeyManager.instance
           .unregisterAll()
@@ -1372,7 +1290,7 @@ class FlutterVideoPlayerController {
       _timer?.cancel();
       pause();
       Wakelock.disable();
-      if (windows) {
+      if (isDesktop) {
         removeWindowsListener();
         _videoPlayerControllerWindows?.dispose();
         _videoPlayerControllerWindows = null;
