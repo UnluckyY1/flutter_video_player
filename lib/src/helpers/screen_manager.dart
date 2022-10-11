@@ -44,13 +44,13 @@ class ScreenManager {
   }
 
   Future<void> setOverlays(bool visible) async {
-    //await SystemChrome.setPreferredOrientations(this.orientations);
+    // await SystemChrome.setPreferredOrientations(this.orientations);
     if (visible) {
       await SystemChrome.setEnabledSystemUIMode(
           edgeToedge ? SystemUiMode.edgeToEdge : SystemUiMode.immersive,
           overlays: overlays);
     } else {
-      //print("Closed2");
+    
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: []);
     }

@@ -789,11 +789,11 @@ class FlutterVideoPlayerController {
 
       if (windows) {
         _listener(player: _videoPlayerControllerWindows);
+
+        /// notify that video was loaded
+        dataStatus.status.value = DataStatus.loaded;
       } else {
         // set the video duration
-        if (kDebugMode) {
-          print('Duration is ${_videoPlayerController!.value.duration}');
-        }
         _duration.value = _videoPlayerController!.value.duration;
 
         /// notify that video was loaded
