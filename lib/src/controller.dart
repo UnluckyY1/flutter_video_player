@@ -505,29 +505,27 @@ class FlutterVideoPlayerController {
 
   /// create a new video_player controller
   VideoPlayerController _createVideoController(DataSource dataSource) {
-    VideoPlayerController tmp; // create a new video controller
-    //dataSource = await checkIfm3u8AndNoLinks(dataSource);
-    if (dataSource.type == DataSourceType.asset) {
-      tmp = VideoPlayerController.asset(
-        dataSource.source!,
-        closedCaptionFile: dataSource.closedCaptionFile,
-        package: dataSource.package,
-      );
-    } else if (dataSource.type == DataSourceType.network) {
-      tmp = VideoPlayerController.network(
-        dataSource.source!,
-        formatHint: dataSource.formatHint,
-        videoPlayerOptions: VideoPlayerOptions(),
-        closedCaptionFile: dataSource.closedCaptionFile,
-        httpHeaders: dataSource.httpHeaders ?? {},
-      );
-    } else {
-      tmp = VideoPlayerController.file(
-        dataSource.file!,
-        closedCaptionFile: dataSource.closedCaptionFile,
-      );
+    switch (dataSource.type) {
+      case DataSourceType.asset:
+        return VideoPlayerController.asset(
+          dataSource.source!,
+          closedCaptionFile: dataSource.closedCaptionFile,
+          package: dataSource.package,
+        );
+      case DataSourceType.network:
+        return VideoPlayerController.network(
+          dataSource.source!,
+          formatHint: dataSource.formatHint,
+          videoPlayerOptions: VideoPlayerOptions(),
+          closedCaptionFile: dataSource.closedCaptionFile,
+          httpHeaders: dataSource.httpHeaders ?? {},
+        );
+      default:
+        return VideoPlayerController.file(
+          dataSource.file!,
+          closedCaptionFile: dataSource.closedCaptionFile,
+        );
     }
-    return tmp;
   }
 
   /// create a new video_player controller
@@ -540,7 +538,6 @@ class FlutterVideoPlayerController {
         refer = dataSource.httpHeaders!['Referer'] ?? '';
       }
     }
-    //print('--http-referrer=' + refer);
 
     Player player = Player(
       id: randomNumber,
@@ -559,35 +556,39 @@ class FlutterVideoPlayerController {
     return player;
   }
 
-  setPlayerDataSource(DataSource dataSource, Player player, seekTo) {
+  Player setPlayerDataSource(DataSource dataSource, Player player, seekTo) {
     duration.value = Duration.zero;
-    if (dataSource.type == DataSourceType.asset) {
-      player.open(
-        Media.asset(dataSource.source!),
-        autoStart: _autoplay,
-      );
-    } else if (dataSource.type == DataSourceType.network) {
-      if (kDebugMode) print(dataSource.source!);
-      player.open(
-        Media.network(
-          dataSource.source!,
-          timeout: const Duration(seconds: 10),
-          //startTime: seekTo
-        ),
-        autoStart: _autoplay,
-      );
-    } else {
-      player.open(
-        Media.file(
-          dataSource.file!,
-          //startTime: seekTo
-        ),
-        autoStart: _autoplay,
-      );
+
+    switch (dataSource.type) {
+      case DataSourceType.asset:
+        player.open(
+          Media.asset(dataSource.source!),
+          autoStart: _autoplay,
+        );
+        break;
+      case DataSourceType.network:
+        player.open(
+          Media.network(
+            dataSource.source!,
+            timeout: const Duration(seconds: 10),
+          ),
+          autoStart: _autoplay,
+        );
+        break;
+      default:
+        player.open(
+          Media.file(
+            dataSource.file!,
+          ),
+          autoStart: _autoplay,
+        );
+        break;
     }
+
     if (seekTo != Duration.zero) {
       this.seekTo(seekTo);
     }
+
     return player;
   }
 
@@ -629,7 +630,9 @@ class FlutterVideoPlayerController {
   void _listener({Player? player}) {
     if (player != null) {
       dataStatus.status.stream.listen((event) {
-        if (kDebugMode) print('dataStatus $event');
+        if (event == DataStatus.loading) {
+          playerStatus.status.value = PlayerStatus.paused;
+        }
       });
       postionStream ??= player.positionStream.listen((event) {
         _duration.value = _videoPlayerControllerWindows!.position.duration!;
@@ -1118,7 +1121,7 @@ class FlutterVideoPlayerController {
 
   /// create a tasks to hide controls after certain time
   void _hideTaskControls() {
-    //print("_hideTaskControls called");
+    
     if (windows) {
       _timer = Timer(const Duration(seconds: 2), () {
         controls = false;
