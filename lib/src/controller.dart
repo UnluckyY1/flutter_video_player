@@ -792,8 +792,10 @@ class FlutterVideoPlayerController {
 
         /// notify that video was loaded
         dataStatus.status.value = DataStatus.loaded;
+        playerStatus.status.value = PlayerStatus.paused;
       } else {
         // set the video duration
+
         _duration.value = _videoPlayerController!.value.duration;
 
         /// notify that video was loaded
