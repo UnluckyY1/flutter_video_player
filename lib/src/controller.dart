@@ -174,6 +174,10 @@ class FlutterVideoPlayerController {
   /// [videoPlayerController] instace of VideoPlayerController
   Player? get videoPlayerControllerWindows => _videoPlayerControllerWindows;
 
+  /// [aspectRatio] gets the video aspectRatio if the platform is android or ios
+  /// otherwise it will return 16/9 by default
+  double get aspectRatio => _videoPlayerController?.value.aspectRatio ?? 16 / 9;
+
   /// the playback speed default value is 1.0
   double get playbackSpeed => _playbackSpeed.value;
 
@@ -608,6 +612,7 @@ class FlutterVideoPlayerController {
           playerStatus.status.value = PlayerStatus.paused;
         }
       });
+
       postionStream ??= player.positionStream.listen((event) {
         _duration.value = _videoPlayerControllerWindows!.position.duration!;
         _position.value = event.position!;
